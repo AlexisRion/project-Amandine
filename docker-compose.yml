@@ -1,0 +1,40 @@
+services:
+  ###> doctrine/doctrine-bundle ###
+  database:
+    image: "mariadb:latest"
+    container_name: db_docker_amandine
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: Amandine
+    ports:
+      - "9408:3306"
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: pma_docker_amandine
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - "9098:80"
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 256M
+
+  mailer:
+    image: schickling/mailcatcher
+    ports: [
+      "1029:1025",
+      "1084:1080"
+    ]
+
+###< doctrine/doctrine-bundle ###
+volumes:
+  ###> doctrine/doctrine-bundle ###
+  db:
+###< doctrine/doctrine-bundle ###
