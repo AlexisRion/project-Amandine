@@ -1,6 +1,9 @@
 {# templates/admin/my_dashboard.html.twig #}
-{% extends '@EasyAdmin/layout.html.twig' %}
+{% extends '@EasyAdmin/page/content.html.twig' %}
 
 {% block main %}
-    {# ... #}
+    <h1>HOME</h1>
+    <tbody>
+        {{ render_chart(chart) }}
+    </tbody>
 {% endblock main %}

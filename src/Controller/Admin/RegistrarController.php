@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Domain;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -11,8 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
 
-#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
-class DomainController extends AbstractDashboardController
+#[AdminDashboard(routePath: '/registrar', routeName: 'registrar')]
+class RegistrarController extends AbstractDashboardController
 {
     public function __construct(
         private ChartBuilderInterface $chartBuilder,
@@ -22,6 +21,7 @@ class DomainController extends AbstractDashboardController
     public function index(): Response
     {
         $chart = $this->chartBuilder->createChart(Chart::TYPE_LINE);
+
         $chart->setData([
             'labels' => ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
             'datasets' => [
@@ -43,7 +43,7 @@ class DomainController extends AbstractDashboardController
             ],
         ]);
 
-        return $this->render('admin/my-dashboard.html.twig', [
+        return $this->render('home/registrar.html.twig', [
             'chart' => $chart,
         ]);
     }
