@@ -3,13 +3,16 @@
 
 {% block main %}
     <h1>HOME</h1>
-    <div id="domain-number-container">
-        <p>actifs</p>
-        <p class="domain-number">{{ activeDomains|length }}</p>
-
-        <p>expire dans les 30 jours</p>
-        <p class="domain-number">{{ domainsToExpire|length }}</p>
-    </div>
+    <table>
+        <tr>
+            <td>Actifs</td>
+            <td>expire < 30 jours</td>
+        </tr>
+        <tr>
+            <td>{{ activeDomains|length }}</td>
+            <td>{{ domainsToExpire|length }}</td>
+        </tr>
+    </table>
 
     <h2>domainsToExpire :</h2>
     <table>
@@ -24,8 +27,9 @@
             </tr>
         {% endfor %}
     </table>
-
+    <br>
     <p>### Il y a un chart en dessous ###</p>
     {{ render_chart(chart) }}
     <p>### Il y a un chart au dessus ###</p>
+    <br>
 {% endblock main %}
