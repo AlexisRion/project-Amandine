@@ -16,28 +16,16 @@ class DomainRepository extends ServiceEntityRepository
         parent::__construct($registry, Domain::class);
     }
 
-    //    /**
-    //     * @return Domain[] Returns an array of Domain objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('d')
-    //            ->andWhere('d.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('d.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Domain
-    //    {
-    //        return $this->createQueryBuilder('d')
-    //            ->andWhere('d.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function getExpireSoon(\DateTimeImmutable $date)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.expireAt <= :date')
+            ->andWhere('d.expireAt >= :dateNow')
+            ->setParameter('date', $date)
+            ->setParameter('dateNow', new \DateTimeImmutable())
+            ->orderBy('d.expireAt', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

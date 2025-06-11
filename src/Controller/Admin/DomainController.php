@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Domain;
+use App\Repository\DomainRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -16,6 +17,7 @@ class DomainController extends AbstractDashboardController
 {
     public function __construct(
         private ChartBuilderInterface $chartBuilder,
+        private DomainRepository $domRepo,
     ) {
     }
 
@@ -43,8 +45,13 @@ class DomainController extends AbstractDashboardController
             ],
         ]);
 
+        $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['id' => 'DESC']);
+        $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
+
         return $this->render('admin/my-dashboard.html.twig', [
             'chart' => $chart,
+            'activeDomains' => $activeDomains,
+            'domainsToExpire' => $domainsToExpire,
         ]);
     }
 
@@ -61,7 +68,7 @@ class DomainController extends AbstractDashboardController
 
             MenuItem::linkToCrud('Domaines', 'fa fa-server', Domain::class),
 
-            MenuItem::section('Users', 'fa fa-user'),
+            //MenuItem::section('Users', 'fa fa-user'),
         ];
     }
 }
