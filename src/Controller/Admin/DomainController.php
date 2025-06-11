@@ -57,10 +57,9 @@ class DomainController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         return [
-            MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
+            MenuItem::linkToDashboard('Dashboard', 'fa fa-chart-line'),
 
-            MenuItem::section('Registrar', 'fa fa-rectangle-list'),
-            //MenuItem::linkToCrud('Domaines', 'fa fa-server', Domain::class),
+            MenuItem::linkToCrud('Domaines', 'fa fa-server', Domain::class),
 
             MenuItem::section('Users', 'fa fa-user'),
         ];
