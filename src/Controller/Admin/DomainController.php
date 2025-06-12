@@ -27,6 +27,7 @@ class DomainController extends AbstractDashboardController
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
         $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);
+        $toSuppressCount = $this->domRepo->getCountExpire(new \DateTimeImmutable());
 
         $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
         $chart->setData([
@@ -55,6 +56,7 @@ class DomainController extends AbstractDashboardController
             'activeDomains' => $activeDomains,
             'domainsToExpire' => $domainsToExpire,
             'domainsToSuppress' => $domainsToSuppress,
+            'toSuppressCount' => $toSuppressCount,
         ]);
     }
 

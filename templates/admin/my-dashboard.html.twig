@@ -6,8 +6,8 @@
         <!-- domains table -->
         <div class="sm-tbl-container" id="table1">
             <h2 class="text-center">Table</h2>
-            <div class="tbl-header-small">
-                <table class="custom-table-small">
+            <div class="tbl-header">
+                <table class="custom-table">
                     <thead>
                         <tr>
                             <th class="th">Actifs</th>
@@ -18,7 +18,7 @@
                 </table>
             </div>
             <div class="tbl-content-small">
-                <table class="custom-table-small">
+                <table class="custom-table">
                     <tr>
                         <td class="td">{{ activeDomains|length }}</td>
                         <td class="td">{{ domainsToExpire|length }}</td>
@@ -73,10 +73,25 @@
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Actifs', 'Expire bientôt', 'Supression programmée'],
+                    labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
                     datasets: [{
                         label: 'Nombre de Domaines',
-                        data: [{{ activeDomains|length }}, {{ domainsToExpire|length }}, {{ domainsToSuppress|length }}],
+                        data: [
+                            {#
+                            {{ toSuppressCount.1 }},
+                            {{ toSuppressCount.2 }},
+                            {{ toSuppressCount.3 }},
+                            {{ toSuppressCount.4 }},
+                            {{ toSuppressCount.5 }},
+                            {{ toSuppressCount.6 }},
+                            {{ toSuppressCount.7 }},
+                            {{ toSuppressCount.8 }},
+                            {{ toSuppressCount.9 }},
+                            {{ toSuppressCount.10 }},
+                            {{ toSuppressCount.11 }},
+                            {{ toSuppressCount.12 }},
+                            #}
+                        ],
                         borderWidth: 1
                     }]
                 },
@@ -90,4 +105,7 @@
             });
         </script>
     </div>
+    {% for key in toSuppressCount %}
+        Key: {{ key }} value: {{ value|json_encode }}
+    {% endfor %}
 {% endblock main %}
