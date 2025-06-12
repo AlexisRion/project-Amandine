@@ -2,34 +2,91 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
 {% block main %}
-    <h1>HOME</h1>
-    <table>
-        <tr>
-            <td>Actifs</td>
-            <td>expire < 30 jours</td>
-        </tr>
-        <tr>
-            <td>{{ activeDomains|length }}</td>
-            <td>{{ domainsToExpire|length }}</td>
-        </tr>
-    </table>
+    <!-- domains table -->
+    <div class="container">
+        <h2 class="text-center">Table</h2>
+        <div class="tbl-header-small">
+            <table class="custom-table-small">
+                <thead>
+                    <tr>
+                        <th class="th">Actifs</th>
+                        <th class="th">Expire < 30 jours</th>
+                        <th class="th">Suppressions programmées</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="tbl-content-small">
+            <table class="custom-table-small">
+                <tr>
+                    <td class="td">{{ activeDomains|length }}</td>
+                    <td class="td">{{ domainsToExpire|length }}</td>
+                    <td class="td">{{ domainsToSuppress|length }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- END domains table -->
 
-    <h2>domainsToExpire :</h2>
-    <table>
-        <tr>
-            <td>|##### NAME #####|</td>
-            <td>|##### EXPIRE AT #####|</td>
-        </tr>
-        {% for domain in domainsToExpire %}
-            <tr>
-                <td>{{ domain.name }}</td>
-                <td>{{ domain.expireAt|date("d / m / y", "Europe/Paris") }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    <br>
-    <p>### Il y a un chart en dessous ###</p>
-    {{ render_chart(chart) }}
-    <p>### Il y a un chart au dessus ###</p>
-    <br>
+    <!-- domains to expire list -->
+    <div class="container">
+        <h2 class="text-center">domainsToExpire</h2>
+        <div class="tbl-header">
+            <table class="custom-table">
+                <tr>
+                    <th class="th">NAME</th>
+                    <th class="th">EXPIRE AT</th>
+                </tr>
+            </table>
+        </div>
+        <div class="tbl-content">
+            <table class="custom-table">
+                {% for domain in domainsToExpire %}
+                    <tr>
+                        <td  class="td">{{ domain.name }}</td>
+                        <td  class="td">{{ domain.expireAt|date("d / m / y", "Europe/Paris") }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <!-- END domains to expire list -->
+
+    <!-- chart -->
+    <div  class="container">
+        <p>### Il y a un chart en dessous ###</p>
+        {{ render_chart(chart) }}
+        <p>### Il y a un chart au dessus ###</p>
+    </div>
+    <!-- END chart -->
+    <div>
+        <h2 class="text-center">Chart</h2>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Actifs', 'Expire bientôt', 'Supression programmée'],
+                datasets: [{
+                    label: 'Nombre de Domaines',
+                    data: [{{ activeDomains|length }}, {{ domainsToExpire|length }}, {{ domainsToSuppress|length }}],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
 {% endblock main %}

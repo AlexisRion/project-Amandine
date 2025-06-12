@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -23,15 +24,19 @@ class DomainController extends AbstractDashboardController
 
     public function index(): Response
     {
+        $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
+        $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
+        $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);
+
         $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
         $chart->setData([
-            'labels' => ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            'labels' => ['Actifs', 'Expire bientôt', 'Supression programmée'],
             'datasets' => [
                 [
-                    'label' => 'My First dataset',
+                    'label' => 'domains',
                     'backgroundColor' => 'rgb(255, 99, 132)',
                     'borderColor' => 'rgb(255, 99, 132)',
-                    'data' => [0, 10, 5, 2, 20, 30, 45],
+                    'data' => [count($activeDomains),  count($domainsToExpire), count($domainsToSuppress)],
                 ],
             ],
         ]);
@@ -45,13 +50,11 @@ class DomainController extends AbstractDashboardController
             ],
         ]);
 
-        $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['id' => 'DESC']);
-        $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
-
         return $this->render('admin/my-dashboard.html.twig', [
             'chart' => $chart,
             'activeDomains' => $activeDomains,
             'domainsToExpire' => $domainsToExpire,
+            'domainsToSuppress' => $domainsToSuppress,
         ]);
     }
 
@@ -70,5 +73,13 @@ class DomainController extends AbstractDashboardController
 
             //MenuItem::section('Users', 'fa fa-user'),
         ];
+    }
+
+    public function configureAssets(): Assets
+    {
+        $asset =  Assets::new();
+
+        return $asset
+            ->addCssFile('build/admin.css');
     }
 }
