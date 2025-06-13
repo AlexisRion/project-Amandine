@@ -88,6 +88,8 @@ class DomainController extends AbstractDashboardController
         $asset =  Assets::new();
 
         return $asset
-            ->addCssFile('build/admin.css');
+            ->addCssFile('build/admin.css')
+            ->addCssFile('assets/styles/app.css')
+            ;
     }
 }

@@ -1,4 +1,4 @@
-/* table */
+/* ### TABLE ### */
 
 :root {
     --tbl-header-bg: #065774;
@@ -62,13 +62,22 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 }
 
-/* grid */
+/* ### CHART ### */
+
+.chart-container {
+    border: 2px solid var(--tbl-header-bg);
+    border-radius: 1rem;
+    padding: 1rem;
+    background-color: var(--th-color);
+}
+
+/* ### GRID ### */
 
 .box {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(6, 1fr);
-    gap: 8px;
+    gap: 2rem;
 }
 
 #table1 {
