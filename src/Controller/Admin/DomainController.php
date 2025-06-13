@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
 
@@ -19,6 +20,7 @@ class DomainController extends AbstractDashboardController
     public function __construct(
         private ChartBuilderInterface $chartBuilder,
         private DomainRepository $domRepo,
+        private HttpClientInterface $client,
     ) {
     }
 
@@ -33,6 +35,12 @@ class DomainController extends AbstractDashboardController
             $months[$i] = $dateNow->format('M');
             $dateNow = $dateNow->add(new \DateInterval('P1M'));
         }
+
+        $response = $this->client->request(
+            'GET',
+            'https://pokeapi.co/api/v2/pokemon/ditto'
+        );
+        $content = $response->getContent();
 
         $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
         $chart->setData([
@@ -63,6 +71,7 @@ class DomainController extends AbstractDashboardController
             'domainsToSuppress' => $domainsToSuppress,
             'toSuppressCount' => $toSuppressCount,
             'months' => $months,
+            'response' => $content,
         ]);
     }
 
