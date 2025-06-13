@@ -28,6 +28,11 @@ class DomainController extends AbstractDashboardController
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
         $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);
         $toSuppressCount = $this->domRepo->getCountExpire(new \DateTimeImmutable());
+        $dateNow = new \DateTimeImmutable();
+        for ($i = 0; $i <= 11; $i++) {
+            $months[$i] = $dateNow->format('M');
+            $dateNow = $dateNow->add(new \DateInterval('P1M'));
+        }
 
         $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
         $chart->setData([
@@ -57,6 +62,7 @@ class DomainController extends AbstractDashboardController
             'domainsToExpire' => $domainsToExpire,
             'domainsToSuppress' => $domainsToSuppress,
             'toSuppressCount' => $toSuppressCount,
+            'months' => $months,
         ]);
     }
 

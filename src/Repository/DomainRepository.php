@@ -16,7 +16,12 @@ class DomainRepository extends ServiceEntityRepository
         parent::__construct($registry, Domain::class);
     }
 
-    public function getExpireSoon(\DateTimeImmutable $date)
+    /**
+     * Function that returns the Domains that expire between now and the given date.
+     * @param \DateTimeImmutable $date
+     * @return mixed
+     */
+    public function getExpireSoon(\DateTimeImmutable $date): mixed
     {
         return $this->createQueryBuilder('d')
             ->where('d.expireAt <= :date')
@@ -29,37 +34,28 @@ class DomainRepository extends ServiceEntityRepository
         ;
     }
 
-    public function getCountExpire(\DateTimeImmutable $date)
+    /**
+     * Function that return the number of Domains that expire for the current month
+     * and the 11 next, grouped by month.
+     * @param \DateTimeImmutable $date
+     * @return array
+     */
+    public function getCountExpire(\DateTimeImmutable $date): array
     {
-        $date->setDate($date->format('Y'), $date->format('m'), 1);
-        $year = array(
-            1 => null,
-            2 => null,
-            3 => null,
-            4 => null,
-            5 => null,
-            6 => null,
-            7 => null,
-            8 => null,
-            9 => null,
-            10 => null,
-            11 => null,
-            12 => null,
-        );
-        for ($i = 1; $i <= 12; $i++) {
-            if ($date->format('m') === $i) {
-                $date->add(new \DateInterval('P1Y'));
-            }
-            $year[$i] = $this->createQueryBuilder('d')
+        // Set date to the 1st of the month
+        $dateD1 = $date->setDate($date->format('Y'), $date->format('m'), 1);
+        for ($i = 0; $i <= 11; $i++) {
+             $result = $this->createQueryBuilder('d')
                 ->select('count(d.id)')
                 ->where('d.expireAt < :monthEnd')
                 ->andWhere('d.expireAt >= :monthStart')
-                ->setParameter('monthEnd', $date->add(new \DateInterval('P1M')))
-                ->setParameter('monthStart', $date)
+                ->setParameter('monthEnd', $dateD1->add(new \DateInterval('P1M')))
+                ->setParameter('monthStart', $dateD1)
                 ->getQuery()
                 ->getResult()
             ;
-            $date = $date->add(new \DateInterval('P1M'));
+            $year[$i] = $result[0][1];
+            $dateD1 = $dateD1->add(new \DateInterval('P1M'));
         }
         return $year;
     }

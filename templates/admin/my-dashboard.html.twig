@@ -60,7 +60,7 @@
             <p>### Il y a un chart au dessus ###</p>
         </div>
         <!-- END chart -->
-        <div id="chart">
+        <div id="chart" class="chart-container">
             <h2 class="text-center">Chart</h2>
             <canvas id="myChart"></canvas>
         </div>
@@ -71,13 +71,25 @@
             const ctx = document.getElementById('myChart');
 
             new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
-                    labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                    labels: ["{{ months.0 }}",
+                        "{{ months.1 }}",
+                        "{{ months.2 }}",
+                        "{{ months.3 }}",
+                        "{{ months.4 }}",
+                        "{{ months.5 }}",
+                        "{{ months.6 }}",
+                        "{{ months.7 }}",
+                        "{{ months.8 }}",
+                        "{{ months.9 }}",
+                        "{{ months.10 }}",
+                        "{{ months.11 }}",
+                        ],
                     datasets: [{
-                        label: 'Nombre de Domaines',
+                        label: 'Expire',
                         data: [
-                            {#
+                            {{ toSuppressCount.0 }},
                             {{ toSuppressCount.1 }},
                             {{ toSuppressCount.2 }},
                             {{ toSuppressCount.3 }},
@@ -89,10 +101,10 @@
                             {{ toSuppressCount.9 }},
                             {{ toSuppressCount.10 }},
                             {{ toSuppressCount.11 }},
-                            {{ toSuppressCount.12 }},
-                            #}
                         ],
-                        borderWidth: 1
+                        backgroundColor: 'rgba(234, 95, 33, 0.5)',
+                        borderColor: 'rgb(234, 95, 33)',
+                        borderWidth: 1,
                     }]
                 },
                 options: {
@@ -105,7 +117,4 @@
             });
         </script>
     </div>
-    {% for key in toSuppressCount %}
-        Key: {{ key }} value: {{ value|json_encode }}
-    {% endfor %}
 {% endblock main %}
