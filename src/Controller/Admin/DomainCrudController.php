@@ -70,6 +70,6 @@ class DomainCrudController extends AbstractCrudController
             ->add(BooleanFilter::new('isHistory', 'Historique'))
             ->add(BooleanFilter::new('isToSuppress', 'A supprimer'))
             ->add(DatetimeFilter::new('expireAt', 'Expire'))
-            ;
+        ;
     }
 }
