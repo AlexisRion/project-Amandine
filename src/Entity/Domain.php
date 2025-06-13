@@ -25,10 +25,10 @@ class Domain
     #[ORM\Column]
     private ?\DateTimeImmutable $expireAt = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ['default' => false])]
     private ?bool $isToSuppress = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ['default' => false])]
     private ?bool $isHistory = null;
 
     public function getId(): ?int
