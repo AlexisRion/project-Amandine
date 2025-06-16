@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Domain;
 use App\Repository\DomainRepository;
+use App\Service\AccessTokenService;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -20,11 +21,13 @@ class DomainController extends AbstractDashboardController
     public function __construct(
         private ChartBuilderInterface $chartBuilder,
         private DomainRepository $domRepo,
+        private AccessTokenService $accessTokenService,
     ) {
     }
 
     public function index(): Response
     {
+        $accesstoken = $this->accessTokenService->getAccessToken();
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
         $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);
@@ -37,7 +40,7 @@ class DomainController extends AbstractDashboardController
 
         $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
         $chart->setData([
-            'labels' => ['Actifs', 'Expire bientôt', 'Supression programmée'],
+            'labels' => ['Actifs', 'Expire bientôt', 'Suppression programmée'],
             'datasets' => [
                 [
                     'label' => 'domains',
@@ -104,9 +107,6 @@ class DomainController extends AbstractDashboardController
 
             // you can use any type of menu item, except submenus
             ->addMenuItems([
-                MenuItem::linkToRoute('My Profile', 'fa fa-id-card', '...', ['...' => '...']),
-                MenuItem::linkToRoute('Settings', 'fa fa-user-cog', '...', ['...' => '...']),
-                MenuItem::section(),
                 MenuItem::linkToLogout('Logout', 'fa fa-sign-out'),
             ]);
     }
