@@ -70,7 +70,9 @@ class DomainController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Project Amandine');
+            ->setTitle('Project Amandine')
+            ->disableDarkMode()
+        ;
     }
 
     public function configureMenuItems(): iterable
@@ -115,7 +117,7 @@ class DomainController extends AbstractDashboardController
         $asset =  Assets::new();
 
         return $asset
-            ->addCssFile('build/admin.css')
+            ->addCssFile('build/styles/admin.css')
             ->addCssFile('assets/styles/app.css')
             ;
     }

@@ -1,3 +1,4 @@
+
 /* ### TABLE ### */
 
 :root {
@@ -104,9 +105,21 @@
     grid-row-start: 4;
 }
 
-/* general */
+/* ### GENERAL ### */
 
 a {
     text-decoration: none;
     color: inherit;
+}
+
+.sidebar {
+    background-color: var(--th-color);
+}
+
+.content-top {
+    background-color: var(--th-color);
+}
+
+h2 {
+    color: var(--tbl-header-bg);
 }
