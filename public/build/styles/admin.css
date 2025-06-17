@@ -93,16 +93,17 @@
     grid-row-start: 2;
 }
 
+#table3 {
+    grid-column: span 2 / span 2;
+    grid-row: span 2 / span 2;
+    grid-row-start: 4;
+}
+
 #chart {
     grid-column: span 3 / span 3;
     grid-row: span 4 / span 4;
     grid-column-start: 3;
     grid-row-start: 1;
-}
-
-#shitty-chart {
-    grid-column: span 2 / span 2;
-    grid-row-start: 4;
 }
 
 /* ### GENERAL ### */

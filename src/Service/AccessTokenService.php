@@ -15,12 +15,14 @@ class AccessTokenService
 
     public function getAccessToken(): string
     {
-        $username = $this->parameterBag->get('API_AFNIC_USERNAME');
+        //$username = $this->parameterBag->get('API_AFNIC_USERNAME'); // Username prod
+        $username = 'd5650-user2'; // Username sandbox
         $password = $this->parameterBag->get('API_AFNIC_PASSWORD');
 
         $response = $this->httpClient->request(
-            'GET',
-            'https://login.nic.fr/auth/realms/fr/protocol/openid-connect/token',
+            'POST',
+            //'https://login.nic.fr/auth/realms/fr/protocol/openid-connect/token', // API prod
+            'https://login-sandbox.nic.fr/auth/realms/fr/protocol/openid-connect/token', // API sandbox
             [
                 'body' => [
                     'client_id' => 'registrars-api-client',

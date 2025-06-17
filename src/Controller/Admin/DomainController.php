@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use App\Service\AccessTokenService;
+use App\Service\GetDomainsService;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -22,12 +23,15 @@ class DomainController extends AbstractDashboardController
         private ChartBuilderInterface $chartBuilder,
         private DomainRepository $domRepo,
         private AccessTokenService $accessTokenService,
+        private GetDomainsService $getDomainsService,
     ) {
     }
 
     public function index(): Response
     {
         $accesstoken = $this->accessTokenService->getAccessToken();
+        $domains = $this->getDomainsService->getDomains($accesstoken);
+
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
         $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);
@@ -67,6 +71,7 @@ class DomainController extends AbstractDashboardController
             'domainsToSuppress' => $domainsToSuppress,
             'toSuppressCount' => $toSuppressCount,
             'months' => $months,
+            'domains' => $domains,
         ]);
     }
 
