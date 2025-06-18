@@ -26,12 +26,12 @@ class DeleteDomainService
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function deleteDomain(Domain $domain, string $accessToken): void
+    public function deleteDomain(string $domainName, string $accessToken): array
     {
         $response = $this->httpClient->request(
             'DELETE',
-            //'https://api.nic.fr/v1/domains/' . $domain->getName(), // API prod
-            'https://api-sandbox.nic.fr/v1/domains/' . $domain->getName(), // API sandbox
+            //'https://api.nic.fr/v1/domains/' . $domainName, // API prod
+            'https://api-sandbox.nic.fr/v1/domains/' . $domainName, // API sandbox
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
@@ -41,8 +41,9 @@ class DeleteDomainService
 
         //TODO update domain to isHistory = true
 
-        $status = $response->getStatusCode();
-        $content = $response->getContent();
-        dd($status, $content, $response);
+        return [
+            'type' => 'success',
+            'message' => 'Domaine supprimé avec succès',
+        ];
     }
 }

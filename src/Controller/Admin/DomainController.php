@@ -24,14 +24,9 @@ use Symfony\UX\Chartjs\Model\Chart;
 class DomainController extends AbstractDashboardController
 {
     public function __construct(
-        private ChartBuilderInterface $chartBuilder,
         private DomainRepository $domRepo,
         private AccessTokenService $accessTokenService,
         private GetDomainsService $getDomainsService,
-        private PersistDomainToDBService $persistDomainToDBService,
-        private DeleteDomainService $deleteDomainService,
-        private CreateDomainService $createDomainService,
-        private CheckDomainAvailabilityService $checkDomainAvailabilityService,
     ) {
     }
 
@@ -39,11 +34,6 @@ class DomainController extends AbstractDashboardController
     {
         $accesstoken = $this->accessTokenService->getAccessToken();
         $domains = $this->getDomainsService->getDomains($accesstoken);
-        // $this->persistDomainToDBService->persistDomainToDB($domains['content'][0]);
-        //$this->deleteDomainService->deleteDomain($this->domRepo->findOneBy(['name' => 'qintessens.fr']), $accesstoken);
-        $available = $this->checkDomainAvailabilityService->checkDomain('azlkjehlkfvhnsdkfjzeipofjsdlkj.fr', $accesstoken);
-        $this->createDomainService->createDomain($this->domRepo->findOneBy(['name' => 'qintessens.fr']), $accesstoken);
-
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
         $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);

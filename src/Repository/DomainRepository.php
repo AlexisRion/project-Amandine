@@ -44,6 +44,7 @@ class DomainRepository extends ServiceEntityRepository
     {
         // Set date to the 1st of the month
         $dateD1 = $date->setDate($date->format('Y'), $date->format('m'), 1);
+
         for ($i = 0; $i <= 11; $i++) {
              $result = $this->createQueryBuilder('d')
                 ->select('count(d.id)')
@@ -57,6 +58,7 @@ class DomainRepository extends ServiceEntityRepository
             $year[$i] = $result[0][1];
             $dateD1 = $dateD1->add(new \DateInterval('P1M'));
         }
+
         return $year;
     }
 }
