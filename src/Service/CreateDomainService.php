@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Domain;
+use App\Repository\DomainRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -12,7 +13,8 @@ class CreateDomainService
         private EntityManagerInterface $em,
         private HttpClientInterface $httpClient,
         private CheckDomainAvailabilityService $checkDomainAvailabilityService,
-        private GetAuthorisationCodeService $getAuthorisationCodeService,
+        private GetDomainsService $getDomainsService,
+//        private GetAuthorisationCodeService $getAuthorisationCodeService,
         private PersistDomainToDBService $persistDomainToDBService,
     )
     {
@@ -31,6 +33,7 @@ class CreateDomainService
      */
     public function createDomain(string $domainName, string $accessToken): array
     {
+        // Check if domain name is available
         if (!$this->checkDomainAvailabilityService->checkDomain($domainName, $accessToken)) {
             return [
                 'type' => 'danger',
@@ -40,7 +43,6 @@ class CreateDomainService
 
         //$this->getAuthorisationCodeService->getAuthorisationCode($domainName, $accessToken);
 
-        //TODO make the request work
         $response = $this->httpClient->request(
             'POST',
             //'https://api.nic.fr/v1/domains', // API prod
@@ -69,12 +71,13 @@ class CreateDomainService
             ]
         );
 
-        //TODO persist the newly created domain to DB
-//        $this->persistDomainToDBService()
+        // Persist the newly created domain to DB
+        $domain = $response->toArray();
+        $this->persistDomainToDBService->persistDomainToDB($domain);
 
         return [
             'type' => 'success',
-            'message' => 'Domaine créé avec succès',
+            'message' => 'Domaine ' . $domainName . ' créé avec succès',
         ];
     }
 }

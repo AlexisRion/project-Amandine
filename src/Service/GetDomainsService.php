@@ -76,4 +76,22 @@ class GetDomainsService
 */
         return $domains;
     }
+
+    public function getDomainByName(string $domainName, string $accessToken): array
+    {
+        $response = $this->httpClient->request(
+            'GET',
+            //'https://api.nic.fr/v1/domains/' . $domainName, // API prod
+            'https://api-sandbox.nic.fr/v1/domains/' . $domainName, // API sandbox
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                ],
+            ]
+        );
+
+        $domain = $response->toArray();
+        dd($domain);
+        return $domain;
+    }
 }

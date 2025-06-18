@@ -32,6 +32,7 @@ class DomainController extends AbstractDashboardController
 
     public function index(): Response
     {
+        //TODO stock accesstoken in session
         $accesstoken = $this->accessTokenService->getAccessToken();
         $domains = $this->getDomainsService->getDomains($accesstoken);
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
@@ -96,7 +97,6 @@ class DomainController extends AbstractDashboardController
                 MenuItem::linkToLogout('Logout', 'fa fa-sign-out'),
             ]);
     }
-
 
     public function configureAssets(): Assets
     {
