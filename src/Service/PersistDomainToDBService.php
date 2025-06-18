@@ -14,6 +14,12 @@ class PersistDomainToDBService
     {
     }
 
+    /**
+     * Function that persist a Domain object from the Afnic API to a Domain object in the database.
+     * @param array $domainArray
+     * @return void
+     * @throws \DateMalformedStringException
+     */
     public function persistDomainToDB(Array $domainArray): void
     {
         $domain = new Domain();

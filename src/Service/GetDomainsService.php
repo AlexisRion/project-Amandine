@@ -13,6 +13,16 @@ class GetDomainsService
     ) {
     }
 
+    /**
+     * Function that returns all the registrar's domains from the Afnic API.
+     * @param string $accessToken
+     * @return array
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function getDomains(string $accessToken): array
     {
         $page = 0; // N° de page

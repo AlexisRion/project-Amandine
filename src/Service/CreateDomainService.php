@@ -15,11 +15,21 @@ class CreateDomainService
     {
     }
 
+    /**
+     * Function that create a Domain object in the Afnic Api and persist it in the database.
+     * @param Domain $domain
+     * @param string $accessToken
+     * @return void
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function createDomain(Domain $domain, string $accessToken): void
     {
         $response = $this->httpClient->request(
             'POST',
-            //'https://api.nic.fr/v1/domains/' . $domain->getName(), // API prod
+            //'https://api.nic.fr/v1/domains', // API prod
             'https://api-sandbox.nic.fr/v1/domains', // API sandbox
             [
                 'headers' => [
@@ -46,5 +56,7 @@ class CreateDomainService
         $status = $response->getStatusCode();
         $content = $response->getContent();
         dd($status, $content, $response);
+
+        //TODO persist the newly created domain to DB
     }
 }

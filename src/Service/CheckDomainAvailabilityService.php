@@ -2,47 +2,48 @@
 
 namespace App\Service;
 
-use App\Entity\Domain;
-use Doctrine\ORM\EntityManagerInterface;
-use JetBrains\PhpStorm\NoReturn;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class DeleteDomainService
+class CheckDomainAvailabilityService
 {
     public function __construct(
-        //private EntityManagerInterface $em,
         private HttpClientInterface $httpClient,
     )
     {
     }
 
     /**
-     * Function that delete a domain from the Afnic API and change the domain to history in database.
-     * @param Domain $domain
+     * Function that checks if a domain name is available.
+     * @param string $domainName
      * @param string $accessToken
-     * @return void
+     * @return bool
      * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function deleteDomain(Domain $domain, string $accessToken): void
+    public function checkDomain(string $domainName, string $accessToken): bool
     {
         $response = $this->httpClient->request(
-            'DELETE',
-            //'https://api.nic.fr/v1/domains/' . $domain->getName(), // API prod
-            'https://api-sandbox.nic.fr/v1/domains/' . $domain->getName(), // API sandbox
+            'POST',
+            //'https://api.nic.fr/v1/domains/check', // API prod
+            'https://api-sandbox.nic.fr/v1/domains/check', // API sandbox
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
                 ],
+                'json' => [
+                    'names' => [
+                        $domainName,
+                    ]
+                ]
             ]
         );
 
-        //TODO update domain to isHistory = true
+        $result = $response->toArray();
+        $content = $result["response"][0];
 
-        $status = $response->getStatusCode();
-        $content = $response->getContent();
-        dd($status, $content, $response);
+        return($content['available']);
     }
 }

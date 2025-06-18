@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use App\Service\AccessTokenService;
+use App\Service\CheckDomainAvailabilityService;
 use App\Service\CreateDomainService;
 use App\Service\DeleteDomainService;
 use App\Service\GetDomainsService;
@@ -30,6 +31,7 @@ class DomainController extends AbstractDashboardController
         private PersistDomainToDBService $persistDomainToDBService,
         private DeleteDomainService $deleteDomainService,
         private CreateDomainService $createDomainService,
+        private CheckDomainAvailabilityService $checkDomainAvailabilityService,
     ) {
     }
 
@@ -39,41 +41,22 @@ class DomainController extends AbstractDashboardController
         $domains = $this->getDomainsService->getDomains($accesstoken);
         // $this->persistDomainToDBService->persistDomainToDB($domains['content'][0]);
         //$this->deleteDomainService->deleteDomain($this->domRepo->findOneBy(['name' => 'qintessens.fr']), $accesstoken);
+        $available = $this->checkDomainAvailabilityService->checkDomain('azlkjehlkfvhnsdkfjzeipofjsdlkj.fr', $accesstoken);
         $this->createDomainService->createDomain($this->domRepo->findOneBy(['name' => 'qintessens.fr']), $accesstoken);
+
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
         $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);
         $toSuppressCount = $this->domRepo->getCountExpire(new \DateTimeImmutable());
+
+        // Set Months to pass them to the twig template for the chart
         $dateNow = new \DateTimeImmutable();
         for ($i = 0; $i <= 11; $i++) {
             $months[$i] = $dateNow->format('M');
             $dateNow = $dateNow->add(new \DateInterval('P1M'));
         }
 
-        $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
-        $chart->setData([
-            'labels' => ['Actifs', 'Expire bientôt', 'Suppression programmée'],
-            'datasets' => [
-                [
-                    'label' => 'domains',
-                    'backgroundColor' => 'rgb(255, 99, 132)',
-                    'borderColor' => 'rgb(255, 99, 132)',
-                    'data' => [count($activeDomains),  count($domainsToExpire), count($domainsToSuppress)],
-                ],
-            ],
-        ]);
-
-        $chart->setOptions([
-            'scales' => [
-                'y' => [
-                    'suggestedMin' => 0,
-                    'suggestedMax' => 100,
-                ],
-            ],
-        ]);
-
         return $this->render('admin/my-dashboard.html.twig', [
-            'chart' => $chart,
             'activeDomains' => $activeDomains,
             'domainsToExpire' => $domainsToExpire,
             'domainsToSuppress' => $domainsToSuppress,
