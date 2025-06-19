@@ -74,6 +74,7 @@ class CreateDomainService
 
         $responseCode = $response->getStatusCode();
 
+        // Check if request to API is OK
         if ($responseCode !== 200) {
             return [
                 'type' => 'danger',
@@ -82,9 +83,7 @@ class CreateDomainService
             ];
         }
 
-        // Persist the newly created domain to DB
         $domain = $response->toArray();
-//        $this->persistDomainToDBService->persistDomainToDB($domain);
 
         return [
             'type' => 'success',

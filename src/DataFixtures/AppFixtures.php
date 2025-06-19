@@ -7,7 +7,6 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker;
 use App\Entity\Domain;
-use function Sodium\add;
 
 class AppFixtures extends Fixture
 {

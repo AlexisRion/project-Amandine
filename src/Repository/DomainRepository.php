@@ -61,4 +61,21 @@ class DomainRepository extends ServiceEntityRepository
 
         return $year;
     }
+
+    public function getIsToSuppress(): array
+    {
+        $dayStart = new \DateTimeImmutable()->setTime(0, 0, 0);
+        $dayEnd = $dayStart->add(new \DateInterval('P1D'));
+
+        return $this->createQueryBuilder('d')
+            ->where('d.isToSuppress = 1')
+            ->andWhere('d.expireAt <= :dateEnd')
+            ->andWhere('d.expireAt >= :dateStart')
+            ->setParameter('dateEnd', $dayEnd)
+            ->setParameter('dateStart', $dayStart)
+            ->orderBy('d.expireAt', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

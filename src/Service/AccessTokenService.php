@@ -33,6 +33,13 @@ class AccessTokenService
             ]
         );
 
+        $responseCode = $response->getStatusCode();
+
+        // Check if request to API is OK
+        if ($responseCode !== 200) {
+            return '';
+        }
+
         $accessToken = $response->toArray();
 
         return $accessToken['access_token'];

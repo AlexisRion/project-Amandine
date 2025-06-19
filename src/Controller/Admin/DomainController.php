@@ -5,12 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use App\Service\AccessTokenService;
-use App\Service\AddYearService;
-use App\Service\CheckDomainAvailabilityService;
-use App\Service\CreateDomainService;
-use App\Service\DeleteDomainService;
 use App\Service\GetDomainsService;
-use App\Service\PersistDomainToDBService;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -18,8 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
-use Symfony\UX\Chartjs\Model\Chart;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DomainController extends AbstractDashboardController
@@ -28,7 +21,6 @@ class DomainController extends AbstractDashboardController
         private DomainRepository $domRepo,
         private AccessTokenService $accessTokenService,
         private GetDomainsService $getDomainsService,
-        private AddYearService $addYearService,
     ) {
     }
 
@@ -36,6 +28,9 @@ class DomainController extends AbstractDashboardController
     {
         //TODO stock accesstoken in session
         $accesstoken = $this->accessTokenService->getAccessToken();
+        if ($accesstoken === '') {
+            $this->addFlash('warning', 'Erreur lors de la récupération du token');
+        }
         $domains = $this->getDomainsService->getDomains($accesstoken);
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
@@ -56,6 +51,7 @@ class DomainController extends AbstractDashboardController
             'toSuppressCount' => $toSuppressCount,
             'months' => $months,
             'domains' => $domains,
+            'test' => $test,
         ]);
     }
 

@@ -50,6 +50,7 @@ class AddYearService
 
         $responseCode = $response->getStatusCode();
 
+        // Check if request to API is OK
         if ($responseCode !== 200) {
             if ($responseCode === 400) {
                 return [

@@ -42,10 +42,11 @@ class DeleteDomainService
 
         $responseCode = $response->getStatusCode();
 
+        // Check if request to API is OK
         if ($responseCode !== 200) {
             return [
                 'type' => 'danger',
-                'message' => '<strong>Erreur ' . $responseCode . ':</strong> an internal error occurred.
+                'message' => '<strong>Erreur ' . $responseCode . ' </strong>
                     Le domain <strong>' . $domainName . '</strong> n\'a pas pu être supprimé.',
             ];
         }
