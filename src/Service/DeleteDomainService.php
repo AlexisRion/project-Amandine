@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use JetBrains\PhpStorm\NoReturn;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class DeleteDomainService

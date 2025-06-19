@@ -3,6 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Domain;
+use App\Service\AccessTokenService;
+use App\Service\CreateDomainService;
+use App\Service\DeleteDomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -17,6 +20,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 
 class DomainCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private AccessTokenService $accessTokenService,
+        private CreateDomainService $createDomainService,
+        private deleteDomainService $deleteDomainService,
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Domain::class;
@@ -25,19 +35,17 @@ class DomainCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            //->setEntityLabelInSingular('Domaine')
-            //->setEntityLabelInPlural('Domaines')
             ->renderContentMaximized()
             ->setSearchFields(['name'])
             ->setAutofocusSearch()
-            ->setPaginatorPageSize(20)
+            ->setPaginatorPageSize(10)
             ->setPaginatorRangeSize(2)
             ->hideNullValues()
             ->setDefaultSort(['expireAt' => 'ASC'])
         ;
     }
 
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Domain
     {
         $domain = new Domain();
         $domain->setCreatedAt(new \DateTimeImmutable());
@@ -52,6 +60,15 @@ class DomainCrudController extends AbstractCrudController
     {
         $entityInstance->setUpdatedAt(new \DateTimeImmutable());
         $entityManager->persist($entityInstance);
+        $entityManager->flush();
+    }
+
+    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $accessToken = $this->accessTokenService->getAccessToken();
+        $flash = $this->deleteDomainService->deleteDomain($entityInstance->getName(), $accessToken);
+        $this->addFlash($flash['type'], $flash['message']);
+        $entityManager->remove($entityInstance);
         $entityManager->flush();
     }
 
