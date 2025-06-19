@@ -73,11 +73,13 @@ class CreateDomainService
 
         // Persist the newly created domain to DB
         $domain = $response->toArray();
-        $this->persistDomainToDBService->persistDomainToDB($domain);
+//        $this->persistDomainToDBService->persistDomainToDB($domain);
 
         return [
             'type' => 'success',
             'message' => 'Domaine ' . $domainName . ' créé avec succès',
+            // Pass the array for persistance to DB in subscriber
+            'domainArray' => $domain,
         ];
     }
 }

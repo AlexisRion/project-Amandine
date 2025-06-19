@@ -22,7 +22,6 @@ class DomainCrudController extends AbstractCrudController
 {
     public function __construct(
         private AccessTokenService $accessTokenService,
-        private CreateDomainService $createDomainService,
         private deleteDomainService $deleteDomainService,
     ) {
     }
@@ -52,7 +51,6 @@ class DomainCrudController extends AbstractCrudController
         $domain->setIsHistory(false);
         // Set expiration date to creation date plus a year
         $domain->setExpireAt($domain->getCreatedAt()->add(new \DateInterval('P1Y')));
-
         return $domain;
     }
 
