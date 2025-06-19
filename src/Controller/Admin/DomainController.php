@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use App\Service\AccessTokenService;
+use App\Service\AddYearService;
 use App\Service\CheckDomainAvailabilityService;
 use App\Service\CreateDomainService;
 use App\Service\DeleteDomainService;
@@ -27,6 +28,7 @@ class DomainController extends AbstractDashboardController
         private DomainRepository $domRepo,
         private AccessTokenService $accessTokenService,
         private GetDomainsService $getDomainsService,
+        private AddYearService $addYearService,
     ) {
     }
 

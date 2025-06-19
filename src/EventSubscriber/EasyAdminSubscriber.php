@@ -24,6 +24,17 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * EventSubscriber that interrogates the Afnic API before
+     * persisting Domain, and create the domain in the API.
+     * @param BeforeEntityPersistedEvent $event
+     * @return void
+     * @throws \DateMalformedStringException
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function createEntityAPI(BeforeEntityPersistedEvent $event): void
     {
         $entity = $event->getEntityInstance();
