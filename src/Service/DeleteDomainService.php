@@ -40,6 +40,16 @@ class DeleteDomainService
             ]
         );
 
+        $responseCode = $response->getStatusCode();
+
+        if ($responseCode !== 200) {
+            return [
+                'type' => 'danger',
+                'message' => '<strong>Erreur ' . $responseCode . ':</strong> an internal error occurred.
+                    Le domain <strong>' . $domainName . '</strong> n\'a pas pu être supprimé.',
+            ];
+        }
+
         // Set Domain status to isHistory in DB
         $domain = $this->domRepo->findOneBy(['name' => $domainName]);
         $domain->setIsHistory(true);
@@ -49,7 +59,7 @@ class DeleteDomainService
 
         return [
             'type' => 'success',
-            'message' => 'Domaine ' . $domainName . ' supprimé avec succès',
+            'message' => 'Domaine <strong>' . $domainName . '</strong> supprimé avec succès',
         ];
     }
 }

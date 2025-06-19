@@ -66,6 +66,9 @@ class DomainCrudController extends AbstractCrudController
         $accessToken = $this->accessTokenService->getAccessToken();
         $flash = $this->deleteDomainService->deleteDomain($entityInstance->getName(), $accessToken);
         $this->addFlash($flash['type'], $flash['message']);
+        if ($flash['type'] === 'danger') {
+            return;
+        }
         $entityManager->remove($entityInstance);
         $entityManager->flush();
     }

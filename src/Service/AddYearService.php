@@ -17,6 +17,16 @@ class AddYearService
     {
     }
 
+    /**
+     * Function that adds given number of years to a given domain.
+     * Returns an associative array with 'type' and 'message' to put in a flash message.
+     * @param Domain $domain
+     * @param int $years
+     * @param string $accessToken
+     * @return string[]
+     * @throws \DateMalformedIntervalStringException
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function addYear(Domain $domain, int $years, string $accessToken): array
     {
         // date_format to get rid of the h:m:s of the dateTime
@@ -37,6 +47,22 @@ class AddYearService
                 ]
             ]
         );
+
+        $responseCode = $response->getStatusCode();
+
+        if ($responseCode !== 200) {
+            if ($responseCode === 400) {
+                return [
+                    'type' => 'danger',
+                    'message' => '<strong>Erreur ' . $responseCode . ':</strong> impossible request. Le temps n\'a pas pu être ajouté',
+                ];
+            }
+
+            return [
+                'type' => 'danger',
+                'message' => '<strong>Erreur ' . $responseCode . ':</strong> an internal error occurred. Le temps n\'a pas pu être ajouté',
+            ];
+        }
 
         $domain->setExpireAt($domain->getExpireAt()->add(new \DateInterval('P' . $years . 'Y')));
         $this->entityManager->persist($domain);
