@@ -51,7 +51,6 @@ class DomainController extends AbstractDashboardController
             'toSuppressCount' => $toSuppressCount,
             'months' => $months,
             'domains' => $domains,
-            'test' => $test,
         ]);
     }
 

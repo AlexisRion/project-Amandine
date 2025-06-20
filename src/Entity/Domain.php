@@ -34,6 +34,9 @@ class Domain
     #[ORM\Column(options: ['default' => false])]
     private ?bool $isHistory = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $yearsToAdd = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -114,6 +117,18 @@ class Domain
     public function setIsHistory(bool $isHistory): static
     {
         $this->isHistory = $isHistory;
+
+        return $this;
+    }
+
+    public function getYearsToAdd(): ?int
+    {
+        return $this->yearsToAdd;
+    }
+
+    public function setYearsToAdd(?int $yearsToAdd): static
+    {
+        $this->yearsToAdd = $yearsToAdd;
 
         return $this;
     }

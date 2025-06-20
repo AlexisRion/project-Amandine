@@ -12,7 +12,6 @@ services:
       MYSQL_DATABASE: Amandine
     ports:
       - "9408:3306"
-
   phpmyadmin:
     image: phpmyadmin
     container_name: pma_docker_amandine

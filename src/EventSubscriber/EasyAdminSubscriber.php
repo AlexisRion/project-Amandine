@@ -3,24 +3,29 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Domain;
+use App\Repository\DomainRepository;
 use App\Service\AccessTokenService;
+use App\Service\AddYearService;
 use App\Service\CreateDomainService;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use function PHPUnit\Framework\throwException;
 
 class EasyAdminSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private AccessTokenService $accessTokenService,
         private CreateDomainService $createDomainService,
+        private AddYearService $addYearService,
+        private DomainRepository $domrepo,
     ) {
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
-            BeforeEntityPersistedEvent::class => ['createEntityAPI'],
+            BeforeEntityPersistedEvent::class => ['persistEntityAPI'],
+            BeforeEntityUpdatedEvent::class => ['updateEntityAPI'],
         ];
     }
 
@@ -35,7 +40,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function createEntityAPI(BeforeEntityPersistedEvent $event): void
+    public function persistEntityAPI(BeforeEntityPersistedEvent $event): void
     {
         $entity = $event->getEntityInstance();
 
@@ -60,5 +65,26 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         $event->getEntityInstance()->setExpireAt($expirationDate);
         $event->getEntityInstance()->setIsToSuppress(false);
         $event->getEntityInstance()->setIsHistory(false);
+    }
+
+    /**
+     *  EventSubscriber that interrogates the Afnic API before
+     *  updating Domain about yearsToAdd, and add years to the domain in the API.
+     * @param BeforeEntityPersistedEvent $event
+     * @return void
+     * @throws \DateMalformedIntervalStringException
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function updateEntityAPI(BeforeEntityUpdatedEvent $event): void
+    {
+        $entity = $event->getEntityInstance();
+        $accessToken = $this->accessTokenService->getAccessToken();
+
+        // Check if there is years to add
+        if ($entity->getYearsToAdd() <= 0) {
+            return;
+        }
+
+        $flash = $this->addYearService->addYear($entity, $accessToken);
     }
 }

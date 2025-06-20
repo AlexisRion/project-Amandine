@@ -21,8 +21,9 @@ class MainSchedule implements ScheduleProviderInterface
     public function getSchedule(): Schedule
     {
         return new Schedule()->add(
-            RecurringMessage::every('1 minutes', new AutoDelete(1)),
+            RecurringMessage::every('10 seconds', new AutoDelete()),
         )
-            ->stateful($this->cache);
+//            ->stateful($this->cache) // Permit to do tasks that was planned but not executed
+            ;
     }
 }

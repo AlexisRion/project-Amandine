@@ -27,10 +27,11 @@ class AddYearService
      * @throws \DateMalformedIntervalStringException
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function addYear(Domain $domain, int $years, string $accessToken): array
+    public function addYear(Domain $domain, string $accessToken): array
     {
         // date_format to get rid of the h:m:s of the dateTime
         $expireAt = date_format($domain->getExpireAt(), 'Y-m-d');
+        $years = $domain->getYearsToAdd();
 
         $response = $this->httpClient->request(
             'POST',
@@ -66,6 +67,7 @@ class AddYearService
         }
 
         $domain->setExpireAt($domain->getExpireAt()->add(new \DateInterval('P' . $years . 'Y')));
+        $domain->setYearsToAdd(0);
         $this->entityManager->persist($domain);
         $this->entityManager->flush();
 

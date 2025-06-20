@@ -1,29 +1,36 @@
 <?php
 
-namespace App\Scheduler\Handler;
+namespace App\EventSubscriber;
 
 use App\Repository\DomainRepository;
-use App\Scheduler\Message\AutoDelete;
 use App\Service\AccessTokenService;
 use App\Service\DeleteDomainService;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
 use function PHPUnit\Framework\isEmpty;
 
-#[AsMessageHandler]
-final class AutoDeleteHandler
+class AutoDeleteSubscriber implements EventSubscriberInterface
 {
     public function __construct(
+        private LoggerInterface $logger,
         private AccessTokenService $accessTokenService,
         private DomainRepository $domRepo,
         private DeleteDomainService $deleteDomainService,
-        private LoggerInterface $logger,
     ) {
     }
 
-    public function __invoke(AutoDelete $message): void
+    public static function getSubscribedEvents()
     {
-        $this->logger->info('Début AutoDelete');
+        return [
+            WorkerMessageHandledEvent::class => 'onWorkerMessageHandled',
+        ];
+    }
+
+    public function onWorkerMessageHandled(WorkerMessageHandledEvent $event): void
+    {
+        $this->logger->info('PASSAGE PAR SUBSCRIBER');
+
         $domains = $this->domRepo->getIsToSuppress();
 
         // If there is no Domain to suppress
@@ -38,5 +45,7 @@ final class AutoDeleteHandler
             $flash = $this->deleteDomainService->deleteDomain($domain->getName(), $accessToken);
             $this->logger->info($flash['type'] . ' ' . $domain->getName() . ' ' . $flash['message']);
         }
+
+        $this->logger->info('Fin AutoDelete');
     }
 }
