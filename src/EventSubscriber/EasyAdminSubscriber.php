@@ -78,13 +78,17 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     public function updateEntityAPI(BeforeEntityUpdatedEvent $event): void
     {
         $entity = $event->getEntityInstance();
-        $accessToken = $this->accessTokenService->getAccessToken();
+
+        if ($entity->getIsToSuppress()) {
+            return;
+        }
 
         // Check if there is years to add
         if ($entity->getYearsToAdd() <= 0) {
             return;
         }
 
+        $accessToken = $this->accessTokenService->getAccessToken();
         $flash = $this->addYearService->addYear($entity, $accessToken);
     }
 }

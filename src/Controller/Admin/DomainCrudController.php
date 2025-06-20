@@ -49,6 +49,7 @@ class DomainCrudController extends AbstractCrudController
     {
         $domain = new Domain();
         $domain->setCreatedAt(new \DateTimeImmutable());
+        $domain->setIsToSuppress(false);
         $domain->setIsHistory(false);
         // Set expiration date to creation date plus a year
         $domain->setExpireAt($domain->getCreatedAt()->add(new \DateInterval('P1Y')));
@@ -78,11 +79,21 @@ class DomainCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        // If admin/domain/edit
+        if (Crud::PAGE_EDIT === $pageName) {
+            return [
+                TextField::new('name', 'Domaine')->setDisabled(true),
+                DateField::new('expireAt', 'Expire')->setDisabled(true),
+                BooleanField::new('isToSuppress', 'A supprimer'),
+                IntegerField::new('yearsToAdd', 'Ajouter année(s)')->onlyWhenUpdating(),
+            ];
+        }
+
         return [
             TextField::new('name', 'Domaine'),
-            DateField::new('expireAt', 'Expire'),
-            BooleanField::new('isToSuppress', 'A supprimer'),
-            IntegerField::new('yearsToAdd', 'Ajouter année(s)')->onlyWhenUpdating(),
+            // Hide if admin/domain/new
+            DateField::new('expireAt', 'Expire')->hideWhenCreating(),
+            BooleanField::new('isToSuppress', 'A supprimer')->hideWhenCreating(),
         ];
     }
 

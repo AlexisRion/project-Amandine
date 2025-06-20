@@ -68,6 +68,7 @@ class AddYearService
 
         $domain->setExpireAt($domain->getExpireAt()->add(new \DateInterval('P' . $years . 'Y')));
         $domain->setYearsToAdd(0);
+        $domain->setIsHistory(false); // In case of adding years to an expired domain
         $this->entityManager->persist($domain);
         $this->entityManager->flush();
 
