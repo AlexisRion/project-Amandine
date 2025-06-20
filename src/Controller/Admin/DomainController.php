@@ -6,6 +6,7 @@ use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use App\Service\AccessTokenService;
 use App\Service\GetDomainsService;
+use Doctrine\Common\Collections\ArrayCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
