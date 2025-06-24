@@ -25,12 +25,15 @@ final class AutoDeleteHandler
     public function __invoke(AutoDelete $message): void
     {
         $this->logger->info('Début AutoDelete');
-//        $domains = new ArrayCollection($this->domRepo->getIsToSuppress());
+
+        // $domains in ArrayCollection format to access isEmpty() method
+        //TODO Get domains from DB
         $domains = new ArrayCollection(['132', 321]);
 
         // If there is no Domain to suppress
         if ($domains->isEmpty()) {
-            $this->logger->info('No domains to suppress');
+            $this->logger->info('No domain to suppress');
+            $this->logger->info('Fin AutoDelete');
             return;
         }
 
@@ -40,5 +43,7 @@ final class AutoDeleteHandler
 //            $flash = $this->deleteDomainService->deleteDomain($domain->getName(), $accessToken);
 //            $this->logger->info($flash['type'] . ' ' . $domain->getName() . ' ' . $flash['message']);
 //        }
+
+        $this->logger->info('Fin AutoDelete');
     }
 }

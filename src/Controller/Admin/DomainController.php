@@ -6,12 +6,12 @@ use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use App\Service\AccessTokenService;
 use App\Service\GetDomainsService;
-use Doctrine\Common\Collections\ArrayCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -22,13 +22,19 @@ class DomainController extends AbstractDashboardController
         private DomainRepository $domRepo,
         private AccessTokenService $accessTokenService,
         private GetDomainsService $getDomainsService,
+        private RequestStack $requestStack,
     ) {
     }
 
     public function index(): Response
     {
-        //TODO stock accesstoken in session
         $accesstoken = $this->accessTokenService->getAccessToken();
+
+        //TODO stock accessToken in session (4min 30s then request new accessToken)
+        $session = $this->requestStack->getSession();
+
+        $session->set('accessToken', $accesstoken);
+
         if ($accesstoken === '') {
             $this->addFlash('warning', 'Erreur lors de la récupération du token');
         }

@@ -2,7 +2,7 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
 {% block main %}
-    <div class="box">
+    <div class="box" {{ stimulus_controller('accessToken') }}>
         <!-- domains table -->
         <div class="sm-tbl-container" id="table1">
             <h2 class="text-center">Domaines</h2>
