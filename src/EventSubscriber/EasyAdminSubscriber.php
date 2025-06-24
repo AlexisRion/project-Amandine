@@ -10,6 +10,7 @@ use App\Service\CreateDomainService;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class EasyAdminSubscriber implements EventSubscriberInterface
 {
@@ -18,6 +19,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         private CreateDomainService $createDomainService,
         private AddYearService $addYearService,
         private DomainRepository $domrepo,
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -52,7 +54,8 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         $flash = $this->createDomainService->createDomain($entity->getName(), $accessToken);
 
         if ($flash['type'] === 'danger') {
-            //TODO throw exception this name is already taken
+            $session = $this->requestStack->getSession();
+            $session->getFlashBag()->add($flash['type'], $flash['message']);
             return;
         }
 
@@ -65,6 +68,9 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         $event->getEntityInstance()->setExpireAt($expirationDate);
         $event->getEntityInstance()->setIsToSuppress(false);
         $event->getEntityInstance()->setIsHistory(false);
+
+        $session = $this->requestStack->getSession();
+        $session->getFlashBag()->add($flash['type'], $flash['message']);
     }
 
     /**
@@ -79,16 +85,19 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     {
         $entity = $event->getEntityInstance();
 
-        if (!($entity->isToSuppress())) {
+        if ($entity->isToSuppress()) {
             return;
         }
 
         // Check if there is years to add
-        if ($entity->getYearsToAdd() === 0) {
+        if ($entity->getYearsToAdd() <= 0) {
             return;
         }
 
         $accessToken = $this->accessTokenService->getAccessToken();
         $flash = $this->addYearService->addYear($entity, $accessToken);
+
+        $session = $this->requestStack->getSession();
+        $session->getFlashBag()->add($flash['type'], $flash['message']);
     }
 }

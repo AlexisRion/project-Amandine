@@ -38,7 +38,7 @@ class DomainController extends AbstractDashboardController
         if ($accesstoken === '') {
             $this->addFlash('warning', 'Erreur lors de la récupération du token');
         }
-        $domains = $this->getDomainsService->getDomains($accesstoken);
+//        $domains = $this->getDomainsService->getDomains($accesstoken); // here to verify that the API domains are the same as the DB
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
         $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);
@@ -57,7 +57,7 @@ class DomainController extends AbstractDashboardController
             'domainsToSuppress' => $domainsToSuppress,
             'toSuppressCount' => $toSuppressCount,
             'months' => $months,
-            'domains' => $domains,
+//            'domains' => $domains, // here to verify that the API domains are the same as the DB
         ]);
     }
 

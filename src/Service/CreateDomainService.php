@@ -75,7 +75,7 @@ class CreateDomainService
         $responseCode = $response->getStatusCode();
 
         // Check if request to API is OK
-        if ($responseCode !== 200) {
+        if ($responseCode !== 200 && $responseCode !== 201) {
             return [
                 'type' => 'danger',
                 'message' => '<strong>Erreur ' . $responseCode . ':</strong> an internal error occurred.
