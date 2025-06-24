@@ -27,8 +27,7 @@ final class AutoDeleteHandler
         $this->logger->info('Début AutoDelete');
 
         // $domains in ArrayCollection format to access isEmpty() method
-        //TODO Get domains from DB
-        $domains = new ArrayCollection(['132', 321]);
+        $domains = new ArrayCollection($this->domRepo->getIsToSuppressToday());
 
         // If there is no Domain to suppress
         if ($domains->isEmpty()) {
@@ -39,10 +38,10 @@ final class AutoDeleteHandler
 
         $accessToken = $this->accessTokenService->getAccessToken();
         // Suppress Domain then log a message to the console
-//        foreach ($domains as $domain) {
-//            $flash = $this->deleteDomainService->deleteDomain($domain->getName(), $accessToken);
-//            $this->logger->info($flash['type'] . ' ' . $domain->getName() . ' ' . $flash['message']);
-//        }
+        foreach ($domains as $domain) {
+            $flash = $this->deleteDomainService->deleteDomain($domain->getName(), $accessToken);
+            $this->logger->info($flash['type'] . ': ' . $flash['logger']);
+        }
 
         $this->logger->info('Fin AutoDelete');
     }

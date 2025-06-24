@@ -62,7 +62,7 @@ class DomainRepository extends ServiceEntityRepository
         return $year;
     }
 
-    public function getIsToSuppress(): array
+    public function getIsToSuppressToday(): array
     {
         $dayStart = new \DateTimeImmutable()->setTime(0, 0, 0);
         $dayEnd = $dayStart->add(new \DateInterval('P1D'));

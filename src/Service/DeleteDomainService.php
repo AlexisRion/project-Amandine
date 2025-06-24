@@ -48,6 +48,7 @@ class DeleteDomainService
                 'type' => 'danger',
                 'message' => '<strong>Erreur ' . $responseCode . ' </strong>
                     Le domain <strong>' . $domainName . '</strong> n\'a pas pu être supprimé.',
+                'logger' => 'Erreur ' . $responseCode . ': Le domain ' . $domainName . ' n\'a pas pu être supprimé.'
             ];
         }
 
@@ -61,6 +62,7 @@ class DeleteDomainService
         return [
             'type' => 'success',
             'message' => 'Domaine <strong>' . $domainName . '</strong> supprimé avec succès',
+            'logger' => 'Domaine ' . $domainName . ' supprimé avec succès',
         ];
     }
 }

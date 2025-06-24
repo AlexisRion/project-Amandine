@@ -79,12 +79,12 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     {
         $entity = $event->getEntityInstance();
 
-        if ($entity->getIsToSuppress()) {
+        if (!($entity->isToSuppress())) {
             return;
         }
 
         // Check if there is years to add
-        if ($entity->getYearsToAdd() <= 0) {
+        if ($entity->getYearsToAdd() === 0) {
             return;
         }
 
