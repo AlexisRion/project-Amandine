@@ -5,7 +5,9 @@ namespace App\Controller\Admin;
 use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use App\Service\AccessTokenService;
+use App\Service\DeleteDomainService;
 use App\Service\GetDomainsService;
+use App\Service\PersistDomainToDBService;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -32,13 +34,13 @@ class DomainController extends AbstractDashboardController
 
         //TODO stock accessToken in session (4min 30s then request new accessToken)
         $session = $this->requestStack->getSession();
-
         $session->set('accessToken', $accesstoken);
 
         if ($accesstoken === '') {
             $this->addFlash('warning', 'Erreur lors de la récupération du token');
         }
-//        $domains = $this->getDomainsService->getDomains($accesstoken); // here to verify that the API domains are the same as the DB
+
+        $domains = $this->getDomainsService->getDomains($accesstoken); // here to verify that the API domains are the same as the DB
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
         $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);
@@ -57,7 +59,7 @@ class DomainController extends AbstractDashboardController
             'domainsToSuppress' => $domainsToSuppress,
             'toSuppressCount' => $toSuppressCount,
             'months' => $months,
-//            'domains' => $domains, // here to verify that the API domains are the same as the DB
+            'domains' => $domains, // here to verify that the API domains are the same as the DB
         ]);
     }
 
@@ -76,7 +78,9 @@ class DomainController extends AbstractDashboardController
 
             MenuItem::linkToCrud('Domaines', 'fa fa-server', Domain::class),
 
-            //MenuItem::section('Users', 'fa fa-user'),
+            MenuItem::linkToRoute('Import API to DB', 'fa fa-database', 'app_database_import'),
+
+            MenuItem::linkToRoute('Supprimer tous les domaines', 'fa fa-trash-can', 'app_database_delete_api'),
         ];
     }
 
@@ -97,9 +101,8 @@ class DomainController extends AbstractDashboardController
             // ->displayUserAvatar(false)
 
             // you can use any type of menu item, except submenus
-            ->addMenuItems([
-                MenuItem::linkToLogout('Logout', 'fa fa-sign-out'),
-            ]);
+
+            ;
     }
 
     public function configureAssets(): Assets

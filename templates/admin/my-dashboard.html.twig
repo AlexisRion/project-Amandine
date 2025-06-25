@@ -54,29 +54,29 @@
         <!-- END domains to expire list -->
 
         <!-- uncomment here and in the domainController to verify that the API domains are the same as the DB -->
-{#        <!-- domains list -->#}
-{#        <div id="table3">#}
-{#            <h2 class="text-center">domains ({{ domains.totalElements }})</h2>#}
-{#            <div class="tbl-header">#}
-{#                <table class="custom-table">#}
-{#                    <tr>#}
-{#                        <th class="th">domaine</th>#}
-{#                        <th class="th">expire le</th>#}
-{#                    </tr>#}
-{#                </table>#}
-{#            </div>#}
-{#            <div class="tbl-content">#}
-{#                <table class="custom-table">#}
-{#                    {% for domain in domains.content %}#}
-{#                        <tr>#}
-{#                            <td  class="td">) }}">{{ domain.name }}</td>#}
-{#                            <td  class="td">{{ domain.expirationDate|date("d / m / y", "Europe/Paris") }}</td>#}
-{#                        </tr>#}
-{#                    {% endfor %}#}
-{#                </table>#}
-{#            </div>#}
-{#        </div>#}
-{#        <!-- END domains list -->#}
+        <!-- domains list -->
+        <div id="table3">
+            <h2 class="text-center">domains ({{ domains.totalElements }})</h2>
+            <div class="tbl-header">
+                <table class="custom-table">
+                    <tr>
+                        <th class="th">domaine</th>
+                        <th class="th">expire le</th>
+                    </tr>
+                </table>
+            </div>
+            <div class="tbl-content">
+                <table class="custom-table">
+                    {% for domain in domains.content %}
+                        <tr>
+                            <td  class="td">) }}">{{ domain.name }}</td>
+                            <td  class="td">{{ domain.expirationDate|date("d / m / y", "Europe/Paris") }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <!-- END domains list -->
 
         <!-- chart -->
         <div id="chart">
