@@ -74,12 +74,12 @@ class DomainController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         return [
+            MenuItem::section('Pages', 'fa fa-newspaper'),
             MenuItem::linkToDashboard('Dashboard', 'fa fa-chart-line'),
-
             MenuItem::linkToCrud('Domaines', 'fa fa-server', Domain::class),
 
+            MenuItem::section('Fonctions', 'fa fa-robot'),
             MenuItem::linkToRoute('Import API to DB', 'fa fa-database', 'app_database_import'),
-
             MenuItem::linkToRoute('Supprimer tous les domaines', 'fa fa-trash-can', 'app_database_delete_api'),
         ];
     }
