@@ -30,7 +30,7 @@ class GetDomainsService
 
         $response = $this->httpClient->request(
             'GET',
-            //'https://api.nic.fr/v1/domains', // API prod
+//            'https://api.nic.fr/v1/domains', // API prod
             'https://api-sandbox.nic.fr/v1/domains', // API sandbox
             [
                 'headers' => [
@@ -44,36 +44,36 @@ class GetDomainsService
         );
 
         $domains = $response->toArray();
-/*
-        while (count($domains) < $domains['totalElements']) {
-            $page++;
 
-            $response = $this->httpClient->request(
-                'GET',
-                //'https://api.nic.fr/v1/domains', // Api prod
-                'https://api-sandbox.nic.fr/v1/domains',
-                [
-                    'headers' => [
-                        'Authorization' => 'Bearer ' . $accessToken,
-                    ],
-                    'query' => [
-                        'page' => $page,
-                        'pageSize' => $pageSize
-                    ]
-                ]
-            );
+//        while (count($domains) < $domains['totalElements']) {
+//            $page++;
+//
+//            $response = $this->httpClient->request(
+//                'GET',
+////                'https://api.nic.fr/v1/domains', // Api prod
+//                'https://api-sandbox.nic.fr/v1/domains',
+//                [
+//                    'headers' => [
+//                        'Authorization' => 'Bearer ' . $accessToken,
+//                    ],
+//                    'query' => [
+//                        'page' => $page,
+//                        'pageSize' => $pageSize
+//                    ]
+//                ]
+//            );
+//
+//            $domainsPage = $response->toArray();
+//
+//            for ($i = 0; $i < $pageSize; $i++) {
+//                $test[$i + $pageSize * $page] = $domainsPage['content'][$i];
+//                array_push($domains['content'],$test[$i + $pageSize]);
+//                if ($i + $pageSize * $page === $domains['totalElements'] - 1) {
+//                    return $domains;
+//                }
+//            }
+//        }
 
-            $domainsPage = $response->toArray();
-
-            for ($i = 0; $i < $pageSize; $i++) {
-                $test[$i + $pageSize * $page] = $domainsPage['content'][$i];
-                array_push($domains['content'],$test[$i + $pageSize]);
-                if ($i + $pageSize * $page === $domains['totalElements'] - 1) {
-                    return $domains;
-                }
-            }
-        }
-*/
         return $domains;
     }
 
@@ -81,7 +81,7 @@ class GetDomainsService
     {
         $response = $this->httpClient->request(
             'GET',
-            //'https://api.nic.fr/v1/domains/' . $domainName, // API prod
+//            'https://api.nic.fr/v1/domains/' . $domainName, // API prod
             'https://api-sandbox.nic.fr/v1/domains/' . $domainName, // API sandbox
             [
                 'headers' => [

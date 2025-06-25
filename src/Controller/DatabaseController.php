@@ -59,14 +59,18 @@ final class DatabaseController extends AbstractController
     public function delete(): Response
     {
         $accesstoken = $this->accessTokenService->getAccessToken();
+        $count = 0;
 
         $domains = $this->getDomainsService->getDomains($accesstoken);
 
         foreach ($domains["content"] as $domain) {
-            $this->deleteDomainService->deleteDomain($domain["name"], $accesstoken);
+            $flash = $this->deleteDomainService->deleteDomain($domain["name"], $accesstoken);
+            if ($flash["type"] === "success") {
+                $count++;
+            }
         }
 
-        $this->addFlash('success', 'Domains API successfully deleted');
+        $this->addFlash('success', '<strong>' . $count . '</strong> domaines supprimés');
 
         return $this->redirect('/admin');
     }

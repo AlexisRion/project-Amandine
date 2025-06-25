@@ -33,6 +33,7 @@ class PersistDomainToDBService
         if (!is_null($test)) {
             $domain = $this->domRepo->findOneBy(['name' => $domainArray['name']]);
 
+            $domain->setExpireAt($expirationDate);
             $domain->setIsHistory(false);
             $domain->setExpireAt($expirationDate);
 
