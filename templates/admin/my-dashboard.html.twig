@@ -141,5 +141,16 @@
             });
         </script>
         <!-- END chart -->
+
+        <!-- Check domain availability form -->
+        <div id="form">
+            <h2 class="text-center">Disponibilité nom de domaine</h2>
+            <div class="form-container">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+        <!-- END Check domain availability form -->
     </div>
 {% endblock main %}

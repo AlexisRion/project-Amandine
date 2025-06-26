@@ -5,17 +5,20 @@ namespace App\Controller\Admin;
 use App\Entity\Domain;
 use App\Repository\DomainRepository;
 use App\Service\AccessTokenService;
-use App\Service\DeleteDomainService;
 use App\Service\GetDomainsService;
-use App\Service\PersistDomainToDBService;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
+use function PHPUnit\Framework\matchesRegularExpression;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DomainController extends AbstractDashboardController
@@ -40,11 +43,32 @@ class DomainController extends AbstractDashboardController
             $this->addFlash('warning', 'Erreur lors de la récupération du token');
         }
 
+        $request = $this->requestStack->getCurrentRequest();
         $domains = $this->getDomainsService->getDomains($accesstoken); // here to verify that the API domains are the same as the DB
         $activeDomains = $this->domRepo->findBy(['isHistory' => false], ['expireAt' => 'ASC']);
         $domainsToExpire = $this->domRepo->getExpireSoon(new \DateTimeImmutable()->add(new \DateInterval('P30D')));
         $domainsToSuppress =  $this->domRepo->findBy(['isToSuppress' => true], ['expireAt' => 'ASC']);
         $toSuppressCount = $this->domRepo->getCountExpire(new \DateTimeImmutable());
+
+        $form = $this->createFormBuilder()
+            ->add('domaine', TextType::class, [
+                'constraints' => new Regex([
+                    'pattern' => '/.*\.fr$/',
+                    'match' => true,
+                    'message' => 'Le nom de domaine doit terminer par ".fr"',
+                ]),
+            ])
+            ->add('Verifier', SubmitType::class)
+            ->getForm()
+        ;
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $domainName = $data['domaine'];
+
+            return $this->redirectToRoute('app_check_available', ['domainName' => $domainName]);
+        }
 
         // Set Months to pass them to the twig template for the chart
         $dateNow = new \DateTimeImmutable();
@@ -59,6 +83,7 @@ class DomainController extends AbstractDashboardController
             'domainsToSuppress' => $domainsToSuppress,
             'toSuppressCount' => $toSuppressCount,
             'months' => $months,
+            'form' => $form,
             'domains' => $domains, // here to verify that the API domains are the same as the DB
         ]);
     }
@@ -80,7 +105,9 @@ class DomainController extends AbstractDashboardController
 
             MenuItem::section('Fonctions', 'fa fa-robot'),
             MenuItem::linkToRoute('Import API to DB', 'fa fa-database', 'app_database_import'),
-            MenuItem::linkToRoute('Supprimer tous les domaines', 'fa fa-trash-can', 'app_database_delete_api'),
+            MenuItem::linkToRoute('Vérifier disponibilité nom de domaine', 'fa fa-clipboard-check', 'app_check_available'),
+            //TODO confirmation renforcée ++ pour l'effacement de tout les domaines (popup + écrire "supprimer tous les domaines")
+            MenuItem::linkToRoute('Supprimer tous les domaines', 'fa fa-trash-can', 'app_database_delete_api')
         ];
     }
 
