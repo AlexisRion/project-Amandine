@@ -1,8 +1,6 @@
 body {
     background-color: #EF9B0C;
-    /*background-image: url("https://www.cyberscope.fr/wp-content/uploads/2025/06/PhotoBureauV2.webp");*/
-    /*background-image: url("https://www.cyberscope.fr/wp-content/uploads/2025/06/0Reunion1.webp");*/
-    background-image: url("https://www.cyberscope.fr/wp-content/uploads/2025/06/strategie-communication-vendee.webp");
+    background-image: url("/assets/img/0Reunion1.webp");
     background-repeat:no-repeat;
     background-size: cover;
 }

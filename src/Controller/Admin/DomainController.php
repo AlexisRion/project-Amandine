@@ -105,7 +105,8 @@ class DomainController extends AbstractDashboardController
 
             MenuItem::section('Fonctions', 'fa fa-robot'),
             MenuItem::linkToRoute('Import API to DB', 'fa fa-database', 'app_database_import'),
-            MenuItem::linkToRoute('Vérifier disponibilité nom de domaine', 'fa fa-clipboard-check', 'app_check_available'),
+            //TODO js for checking disponibility (modal that opens a text field that points toward CheckDomainController)
+//            MenuItem::linkToRoute('Vérifier disponibilité nom de domaine', 'fa fa-clipboard-check', 'app_check_available'),
             //TODO confirmation renforcée ++ pour l'effacement de tout les domaines (popup + écrire "supprimer tous les domaines")
             MenuItem::linkToRoute('Supprimer tous les domaines', 'fa fa-trash-can', 'app_database_delete_api')
         ];
@@ -138,7 +139,6 @@ class DomainController extends AbstractDashboardController
 
         return $asset
             ->addCssFile('build/styles/admin.css')
-            ->addCssFile('assets/styles/app.css')
             ;
     }
 }
